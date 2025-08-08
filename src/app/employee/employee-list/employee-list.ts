@@ -12,7 +12,7 @@ export interface Employee {
   email: string;
   position: string;
   department: string;
-  startDate: string;
+  startDate: Date;
 }
 
 @Component({
@@ -49,6 +49,21 @@ export class EmployeeList implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      if (property === 'startDate') {
+        const value = item.startDate;
+        if (!value) return 0;
+        if (typeof value === 'string') {
+          const parsed = Date.parse(value);
+          return isNaN(parsed) ? 0 : parsed;
+        }
+        if (value instanceof Date) {
+          return value.getTime();
+        }
+        return 0;
+      }
+      return (item as any)[property];
+    };
   }
 
   addEmployee(): void {
