@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, TemplateRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
@@ -85,7 +85,23 @@ export class EmployeeList implements OnInit, AfterViewInit {
     });
   }
 
-  removeEmployee(id: number): void {
+  removeEmployee(id: number, confirmDialog?: TemplateRef<any>): void {
+    if (confirmDialog) {
+      const fn = this.dataSource.data.find(e => e.id === id)?.firstName;
+      const dialogRef = this.dialog.open(confirmDialog, {
+        data: { firstName: fn }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this._removeEmployee(id);
+        }
+      });
+    } else {
+      this._removeEmployee(id);
+    }
+  }
+
+  private _removeEmployee(id: number): void {
     const filtered = this.dataSource.data.filter(e => e.id !== id);
     const newData = filtered.map((e, idx) => ({ ...e, id: idx + 1 }));
     this.employees = newData;
