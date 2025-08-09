@@ -1,0 +1,164 @@
+<div class="employee-list-container">
+  <div class="employee-list-toolbar">
+    <button class="add-btn" (click)="openAddModal()">Add Employee</button>
+    <!-- Add Employee Modal -->
+    <div class="modal-backdrop" *ngIf="showAddModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Add New Employee</h3>
+          <button class="close-btn" (click)="closeAddModal()">&times;</button>
+        </div>
+        <form
+          (ngSubmit)="submitAddEmployee()"
+          #addEmpForm="ngForm"
+          class="modal-form"
+        >
+          <div class="modal-body">
+            <input
+              type="text"
+              placeholder="First Name"
+              [(ngModel)]="addForm.firstName"
+              name="firstName"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              [(ngModel)]="addForm.lastName"
+              name="lastName"
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              [(ngModel)]="addForm.email"
+              name="email"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Position"
+              [(ngModel)]="addForm.position"
+              name="position"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Department"
+              [(ngModel)]="addForm.department"
+              name="department"
+              required
+            />
+            <input
+              type="date"
+              placeholder="Start Date"
+              [(ngModel)]="addForm.startDate"
+              name="startDate"
+              required
+            />
+          </div>
+          <div class="modal-actions">
+            <button type="button" (click)="closeAddModal()">Cancel</button>
+            <button type="submit" [disabled]="!addEmpForm.form.valid">
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <label>
+      Sort by:
+      <select [(ngModel)]="sortField" (change)="sortEmployees()">
+        <option value="id">ID</option>
+        <option value="firstName">First Name</option>
+        <option value="lastName">Last Name</option>
+        <option value="email">Email</option>
+        <option value="position">Position</option>
+        <option value="department">Department</option>
+        <option value="startDate">Start Date</option>
+      </select>
+    </label>
+    <label>
+      Order:
+      <select [(ngModel)]="sortDirection" (change)="sortEmployees()">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="employee-grid">
+    <div class="employee-card" *ngFor="let employee of pagedEmployees">
+      <div class="employee-header">
+        <div class="employee-title">
+          {{ employee.firstName }} {{ employee.lastName }}
+        </div>
+        <div class="employee-subtitle">
+          {{ employee.position }} - {{ employee.department }}
+        </div>
+      </div>
+      <div class="employee-content">
+        <div>Email: {{ employee.email }}</div>
+        <div>Start Date: {{ employee.startDate | date : "MM/dd/yyyy" }}</div>
+      </div>
+      <div class="employee-actions">
+        <button class="delete-btn" (click)="openDeleteModal(employee)">
+          Delete
+        </button>
+      </div>
+      <!-- Delete Employee Modal -->
+      @if (showDeleteModal) {
+      <div class="modal-backdrop">
+        <div class="modal">
+          <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="close-btn" (click)="closeDeleteModal()">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Are you sure you want to delete
+              <b
+                >{{ employeeToDelete?.firstName }}
+                {{ employeeToDelete?.lastName }}</b
+              >?
+            </p>
+          </div>
+          <div class="modal-actions">
+            <button type="button" (click)="closeDeleteModal()">Cancel</button>
+            <button
+              type="button"
+              (click)="confirmDeleteEmployee()"
+              class="delete-btn"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <button (click)="page = 1" [disabled]="page === 1">First</button>
+      <button (click)="page = page - 1" [disabled]="page === 1">Prev</button>
+      <span>Page {{ page }} of {{ totalPages }}</span>
+      <button (click)="page = page + 1" [disabled]="page === totalPages">
+        Next
+      </button>
+      <button (click)="page = totalPages" [disabled]="page === totalPages">
+        Last
+      </button>
+      <span
+        >&nbsp;|&nbsp;Rows per page:
+        <select [(ngModel)]="pageSize" (change)="page = 1">
+          <option *ngFor="let size of [5, 10, 20, 50, 100]" [value]="size">
+            {{ size }}
+          </option>
+        </select>
+      </span>
+      <span>&nbsp;|&nbsp;Total: {{ employees.length }}</span>
+    </div>
+  </div>
+</div>

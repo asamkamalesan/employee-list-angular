@@ -14,9 +14,10 @@ import { Employee } from './employee';
 import { EmployeeAddDialog } from './employee-add-dialog/employee-add-dialog';
 import { EmployeeList } from './employee-list/employee-list';
 import { EmployeeRoutingModule } from './employee-routing-module';
+import { EmployeeListGrid } from './employee-list-grid/employee-list-grid';
 
 @NgModule({
-  declarations: [Employee, EmployeeList, EmployeeAddDialog],
+  declarations: [Employee, EmployeeList, EmployeeAddDialog, EmployeeListGrid],
   imports: [
     CommonModule,
     FormsModule,
