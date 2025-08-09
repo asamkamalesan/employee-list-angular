@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, TemplateRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { EmployeeAddDialog } from '../employee-add-dialog/employee-add-dialog';
 import { EmployeeService } from '../employee-service';
@@ -26,6 +27,7 @@ export class EmployeeList implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Employee>([]);
 
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private employeeService: EmployeeService,
@@ -44,11 +46,13 @@ export class EmployeeList implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.employeeService.loadEmployees().then(data => {
       this.dataSource.data = [...data];
+      this.dataSource.paginator = this.paginator;
     });
   }
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = (item, property) => {
       if (property === 'startDate') {
         const value = item.startDate;
